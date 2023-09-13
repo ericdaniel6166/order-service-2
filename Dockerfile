@@ -1,13 +1,13 @@
 ARG DEPENDENCY=extracted
 
-FROM amazoncorretto:17-alpine-jdk as builder
+FROM amazoncorretto:17-alpine-jdk AS builder
 ARG DEPENDENCY
 WORKDIR ${DEPENDENCY}
 ARG JAR_FILE=target/*.jar
 ADD ${JAR_FILE} app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
-FROM builder as launcher
+FROM builder AS launcher
 WORKDIR application
 ARG DEPENDENCY
 COPY --from=builder ${DEPENDENCY}/dependencies/ ./
