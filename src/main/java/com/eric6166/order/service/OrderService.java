@@ -1,12 +1,13 @@
 package com.eric6166.order.service;
 
-import com.eric6166.framework.kafka.AppEvent;
+import com.eric6166.framework.kafka.Event;
 import com.eric6166.order.client.InventoryClient;
 import com.eric6166.order.dto.InventoryResponse;
 import com.eric6166.order.dto.OrderLineItemsDto;
 import com.eric6166.order.dto.OrderRequest;
 import com.eric6166.order.enums.TypeReq;
 import com.eric6166.order.event.OrderPlacedEvent;
+import com.eric6166.order.kafka.KafkaProducerProperties;
 import com.eric6166.order.model.Order;
 import com.eric6166.order.model.OrderLineItem;
 import com.eric6166.order.repository.OrderRepository;
@@ -33,9 +34,7 @@ import java.util.UUID;
 public class OrderService {
 
     final OrderRepository orderRepository;
-    //
-//    @Autowired
-//    WebClient.Builder webClientBuilder;
+
     final WebClient.Builder webClientBuilder;
 //
 //    final Tracer tracer;
@@ -44,6 +43,7 @@ public class OrderService {
 
     final InventoryClient inventoryClient;
 
+    final KafkaProducerProperties kafkaProducerProperties;
 
     public String placeOrder(OrderRequest orderRequest, TypeReq typeReq) {
         Order order = new Order();
@@ -76,16 +76,16 @@ public class OrderService {
         }
         if (Boolean.TRUE.equals(allProductsInStock)) {
             orderRepository.saveAndFlush(order);
-            kafkaTemplate.send("notificationTopic", AppEvent.builder()
+            kafkaTemplate.send(kafkaProducerProperties.getNotificationTopicName(), Event.builder()
                     .payload(OrderPlacedEvent.builder()
                             .orderNumber(order.getOrderNumber())
                             .build())
                     .build());
-//            kafkaTemplate.send("internalTopic", AppEvent.builder()
-//                    .payload(OrderPlacedEvent.builder()
-//                            .orderNumber(order.getOrderNumber())
-//                            .build())
-//                    .build());
+            kafkaTemplate.send(kafkaProducerProperties.getInternalTopicName(), Event.builder()
+                    .payload(OrderPlacedEvent.builder()
+                            .orderNumber(order.getOrderNumber())
+                            .build())
+                    .build());
             log.info("inventoryResponseList : {}", inventoryResponseList);
             return "Order Placed";
         } else {

@@ -32,13 +32,14 @@ spring:
     bootstrap-servers: ${app.kafka-hostname}:${app.kafka-port}
     template:
       default-topic: ${app.kafka-default-topic}
-#    consumers:
-#      internal-consumer:
-#        topic-name: internal-topic
-    consumer:
-      properties:
-        concurrency: ${app.kafka-concurrency}
-      group-id: ${app.kafka-group-id}
+    producers:
+      internal-producer:
+        topic-name: internalTopic
+      notification-producer:
+        topic-name: notificationTopic
+#    producer:
+#      properties:
+
   datasource:
     url: jdbc:postgresql://${app.database-hostname}:${app.database-port}/${app.database-name}
     username: postgres

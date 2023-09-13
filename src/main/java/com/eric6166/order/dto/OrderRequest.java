@@ -1,14 +1,17 @@
 package com.eric6166.order.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderRequest {
-    private List<OrderLineItemsDto> orderLineItemsDtoList;
+    List<OrderLineItemsDto> orderLineItemsDtoList;
 }

@@ -1,10 +1,12 @@
 package com.eric6166.order.controller;
 
-import com.eric6166.framework.kafka.AppKafkaProperties;
+import com.eric6166.framework.kafka.KafkaProperties;
 import com.eric6166.order.dto.OrderRequest;
 import com.eric6166.order.enums.TypeReq;
 import com.eric6166.order.service.OrderService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,22 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderController {
 
-    private final OrderService orderService;
-
-    final AppKafkaProperties appKafkaProperties;
+    final OrderService orderService;
 
     @GetMapping
     public String sampleOrder() {
-        log.info("appKafkaProperties {}", appKafkaProperties);
-        log.info("appKafkaProperties.getBootstrapServers() {}", appKafkaProperties.getBootstrapServers());
+        log.info("Sample order");
         return "Sample Order";
-    }
-
-    @PostMapping
-    public String samplePostOrder() {
-        return "Sample Post Order";
     }
 
     @PostMapping("/web-client")
@@ -56,7 +51,6 @@ public class OrderController {
 //    }
 //
 //
-
 
 //    public CompletableFuture<String> fallbackMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
 //        log.info("Cannot Place Order, Executing Fallback logic");
